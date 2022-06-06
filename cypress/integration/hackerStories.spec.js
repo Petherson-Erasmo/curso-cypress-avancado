@@ -54,11 +54,11 @@ describe('Hacker Stories', () => {
         .should('have.length', 19)
     })
 
-    // Since the API is external,
-    // I can't control what it will provide to the frontend,
-    // and so, how can I test ordering?
-    // This is why these tests are being skipped.
-    // TODO: Find a way to test them out.
+    // // Since the API is external,
+    // // I can't control what it will provide to the frontend,
+    // // and so, how can I test ordering?
+    // // This is why these tests are being skipped.
+    // // TODO: Find a way to test them out.
     // context.skip('Order by', () => {
     //   it('orders by title', () => {})
 
@@ -67,15 +67,6 @@ describe('Hacker Stories', () => {
     //   it('orders by comments', () => {})
 
     //   it('orders by points', () => {})
-    // })
-
-    // // Hrm, how would I simulate such errors?
-    // // Since I still don't know, the tests are being skipped.
-    // // TODO: Find a way to test them out.
-    // context.skip('Errors', () => {
-    //   it('shows "Something went wrong ..." in case of a server error', () => {})
-
-    //   it('shows "Something went wrong ..." in case of a network error', () => {})
     // })
   })
 
@@ -155,5 +146,33 @@ describe('Hacker Stories', () => {
           .should('have.length', 5)
       })
     })
+  })
+})
+
+describe('Errors message', () => {
+  const errorMsg = 'Something went wrong ...'
+
+  it('Shows "Something went wrong ..." in case of a server error', () => {
+    cy.intercept(
+      'GET',
+      '**/search**',
+      { statusCode: 500 }
+    ).as('getServerFailure')
+    cy.visit('/')
+    cy.wait('@getServerFailure')
+    cy.contains(errorMsg)
+      .should('be.visible')
+  })
+
+  it('Shows "Something went wrong ..." in case of a network error', () => {
+    cy.intercept(
+      'GET',
+      '**/search**',
+      { forceNetworkError: true }
+    ).as('getNetworkFailure')
+    cy.visit('/')
+    cy.wait('@getNetworkFailure')
+    cy.contains(errorMsg)
+      .should('be.visible')
   })
 })
