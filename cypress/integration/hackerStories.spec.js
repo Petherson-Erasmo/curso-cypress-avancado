@@ -30,13 +30,12 @@ describe('Hitting the real API', () => {
     }).as('getNextStories')
 
     cy.get('div[class="item"]')
-      .should('be.visible')
       .should('have.length', 20)
     cy.contains('More')
+      .should('be.visible')
       .click()
     cy.wait('@getNextStories')
     cy.get('div[class="item"]')
-      .should('be.visible')
       .should('have.length', 40)
   })
 
@@ -47,8 +46,8 @@ describe('Hitting the real API', () => {
     ).as('getNewTermStories')
 
     cy.get('#search')
-      .should('be.visible')
       .clear()
+      .should('be.visible')
       .type(`${newTerm}{enter}`)
     cy.wait('@getNewTermStories')
     cy.get(`button:contains(${initialTerm})`)
@@ -56,7 +55,6 @@ describe('Hitting the real API', () => {
       .click()
     cy.wait('@getStories')
     cy.get('div[class="item"]')
-      .should('be.visible')
       .should('have.length', 20)
     cy.get('div[class="item"]')
       .first()
@@ -90,43 +88,40 @@ describe('Mocking the API', () => {
 
       it('Shows the right data for all rendered stories', () => {
         cy.get('div[class="item"]')
-          .should('be.visible')
           .first()
+          .should('be.visible')
           .should('contain', stories.hits[0].title)
           .and('contain', stories.hits[0].author)
           .and('contain', stories.hits[0].num_comments)
           .and('contain', stories.hits[0].points)
         cy.contains(stories.hits[0].title)
-          .should('be.visible')
           .should('have.attr', 'href', stories.hits[0].url)
         cy.get('div[class="item"]')
-          .should('be.visible')
           .last()
+          .should('be.visible')
           .should('contain', stories.hits[1].title)
           .and('contain', stories.hits[1].author)
           .and('contain', stories.hits[1].num_comments)
           .and('contain', stories.hits[1].points)
         cy.contains(stories.hits[1].title)
-          .should('be.visible')
           .should('have.attr', 'href', stories.hits[1].url)
       })
 
       it('Shows one story less after dimissing the first one', () => {
         cy.get('.button-small')
-          .should('be.visible')
           .first()
+          .should('be.visible')
           .click()
 
         cy.get('div[class="item"]')
-          .should('be.visible')
           .should('have.length', 1)
       })
 
       context('Order by', () => {
         it('Orders by title', () => {
           cy.get('.list-header-button:contains(Title)')
-            .should('be.visible')
             .as('titleHeader')
+            .should('be.visible')
             .click()
 
           cy.get('div[class="item"]')
@@ -134,25 +129,22 @@ describe('Mocking the API', () => {
             .should('be.visible')
             .and('contain', stories.hits[0].title)
           cy.contains(stories.hits[0].title)
-            .should('be.visible')
             .should('have.attr', 'href', stories.hits[0].url)
 
           cy.get('@titleHeader')
-            .should('be.visible')
             .click()
           cy.get('div[class="item"]')
             .first()
             .should('be.visible')
             .and('contain', stories.hits[1].title)
           cy.contains(stories.hits[1].title)
-            .should('be.visible')
             .should('have.attr', 'href', stories.hits[1].url)
         })
 
         it('Orders by author', () => {
           cy.get('.list-header-button:contains(Author)')
-            .should('be.visible')
             .as('authorHeader')
+            .should('be.visible')
             .click()
 
           cy.get('div[class="item"]')
@@ -161,7 +153,6 @@ describe('Mocking the API', () => {
             .and('contain', stories.hits[0].author)
 
           cy.get('@authorHeader')
-            .should('be.visible')
             .click()
           cy.get('div[class="item"]')
             .first()
@@ -172,8 +163,8 @@ describe('Mocking the API', () => {
 
         it('Orders by comments', () => {
           cy.get('.list-header-button:contains(Comments)')
-            .should('be.visible')
             .as('commentsHeader')
+            .should('be.visible')
             .click()
 
           cy.get('div[class="item"]')
@@ -182,7 +173,6 @@ describe('Mocking the API', () => {
             .and('contain', stories.hits[0].num_comments)
 
           cy.get('@commentsHeader')
-            .should('be.visible')
             .click()
           cy.get('div[class="item"]')
             .first()
@@ -192,8 +182,8 @@ describe('Mocking the API', () => {
 
         it('Orders by points', () => {
           cy.get('.list-header-button:contains(Points)')
-            .should('be.visible')
             .as('pointsHeader')
+            .should('be.visible')
             .click()
 
           cy.get('div[class="item"]')
@@ -202,10 +192,8 @@ describe('Mocking the API', () => {
             .and('contain', stories.hits[0].points)
 
           cy.get('@pointsHeader')
-            .should('be.visible')
             .click()
           cy.get('div[class="item"]')
-            .should('be.visible')
             .first()
             .should('be.visible')
             .and('contain', stories.hits[1].points)
@@ -246,7 +234,6 @@ describe('Mocking the API', () => {
         .type(`${newTerm}{enter}`)
       cy.wait('@getStories')
       cy.get('div[class="item"]')
-        .should('be.visible')
         .should('have.length', 2)
       cy.get(`button:contains(${initialTerm})`)
         .should('be.visible')
@@ -261,7 +248,6 @@ describe('Mocking the API', () => {
         .click()
       cy.wait('@getStories')
       cy.get('div[class="item"]')
-        .should('be.visible')
         .should('have.length', 2)
       cy.get(`button:contains(${initialTerm})`)
         .should('be.visible')
@@ -279,14 +265,16 @@ describe('Mocking the API', () => {
 
         Cypress._.times(6, () => {
           cy.get('#search')
-            .should('be.visible')
             .clear()
             .type(`${faker.random.word()}{enter}`)
           cy.wait('@getRandomStories')
         })
-        cy.get('.last-searches button')
-          .should('be.visible')
-          .should('have.length', 5)
+        cy.get('.last-searches')
+          .within(() => {
+            cy.get('button')
+              .should('have.length', 5)
+          })
+          
       })
     })
   })
